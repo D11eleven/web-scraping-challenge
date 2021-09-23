@@ -11,10 +11,11 @@ mongo = PyMongo(app, uri="mongodb://localhost:27017/weather_app")
 
 # Route to render index.html template using data from Mongo
 @app.route("/")
-def home():
+def index():
 
     # Find one record of data from the mongo database
-    destination_data = mongo.db.collection.find_one()
+   #  destination_data = mongo.db.collection.find_one()
+   mars = mongo.db.mars_data.find_one()
 
     # Return template and data
     return render_template("index.html", vacation=destination_data)

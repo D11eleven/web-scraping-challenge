@@ -1,10 +1,11 @@
 from splinter import Browser
 from bs4 import BeautifulSoup as bs
 import time
+
 # from webdriver_manager.chrome import ChromeDriverManager
 
 
-def scrape_info():
+def scrape_mars():
     # Set up Splinter
     # executable_path = {'executable_path': ChromeDriverManager().install()}
     executable_path = {'executable_path': 'chromedriver'}
