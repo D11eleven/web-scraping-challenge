@@ -1,39 +1,39 @@
+# ## Step 2 - MongoDB and Flask Application
+
+# Use MongoDB with Flask templating to create a new HTML page that displays all of the information that was scraped from the URLs above.
+
+# * Start by converting your Jupyter notebook into a Python script called `scrape_mars.py` with a function called `scrape` that will execute all of your scraping code from above and return one Python dictionary containing all of the scraped data.
+
+# * Next, create a route called `/scrape` that will import your `scrape_mars.py` script and call your `scrape` function.
+
+#   * Store the return value in Mongo as a Python dictionary.
+
+# * Create a root route `/` that will query your Mongo database and pass the mars data into an HTML template to display the data.
+
+
 from flask import Flask, render_template, redirect
 from flask_pymongo import PyMongo
 import scrape_mars
 
-# Create an instance of Flask
 app = Flask(__name__)
 
-# Use PyMongo to establish Mongo connection
-mongo = PyMongo(app, uri="mongodb://localhost:27017/weather_app")
 
+app.config["MONGO_URI"] = "mongodb://localhost:27017/mars"
+mongo = PyMongo(app)
 
-# Route to render index.html template using data from Mongo
 @app.route("/")
 def index():
+    scraped_info = mongo.db.scraped_info.find_one()
+    return render_template("index.html", scraped_info=scraped_info)
 
-    # Find one record of data from the mongo database
-   #  destination_data = mongo.db.collection.find_one()
-   mars = mongo.db.mars_data.find_one()
-
-    # Return template and data
-    return render_template("index.html", vacation=destination_data)
-
-
-# Route that will trigger the scrape function
 @app.route("/scrape")
 def scrape():
+    mars=mongo.db.mars
+    mars_data = scrape_mars.scrape()
 
-    # Run the scrape function
-    costa_data = scrape_mars.scrape_info()
+    mongo.db.scraped_info.update({}, scraped, upsert=True)
 
-    # Update the Mongo database using update and upsert=True
-    mongo.db.collection.update({}, costa_data, upsert=True)
-
-    # Redirect back to home page
     return redirect("/")
-
 
 if __name__ == "__main__":
     app.run(debug=True)
